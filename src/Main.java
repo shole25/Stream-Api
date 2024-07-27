@@ -10,7 +10,10 @@ public class Main {
                 .filter(employee -> employee.getAge() > 30)
                 .collect(Collectors.toList());
         System.out.printf("Employees greater than 30 " + employeesGreaterThan30);
-
+List<String> employeeName=employees.stream()
+        .map(employee -> employee.getName())
+        .collect(Collectors.toList());
+        System.out.println("Name of employee "+employeeName);
 
         Optional<Employee> highestSalaryEmployee = employees.stream()
                 .max(Comparator.comparing(Employee::getSalary));
@@ -73,7 +76,12 @@ public class Main {
                 .map(employee -> employee.getName() + " " + employee.getSurname())
                 .collect(Collectors.toList());
         System.out.println("Name and Surname " + nameAndSurname);
-//18
+
+        List<Double> salaryIncrease10percent = employees.stream()
+                .map(employee -> employee.getSalary()*1.10)
+                .collect(Collectors.toList());
+        System.out.println("Increase 10 percent "+salaryIncrease10percent);
+
         double totalSalaryIT = employees.stream()
                 .filter(employee -> employee.getDepartment() == Department.IT)
                 .mapToDouble(Employee::getSalary)
@@ -83,14 +91,15 @@ public class Main {
         Map<Department, Double> totalSalaryEachDepartment = employees.stream()
                 .collect(Collectors.groupingBy(Employee::getDepartment, Collectors.summingDouble(Employee::getSalary)));
         System.out.println("Each department salary " + totalSalaryEachDepartment);
-//21
-//      double averageSalary = employees.stream()
-//                .mapToDouble(Employee::getSalary)
-//                .average();
-//
-//        List<Employee> salaryGreaterThanAverageSalary =employees.stream()
-//                .filter(employee -> employee.getSalary() > averageSalary)
-//                .collect(Collectors.toList());
+
+     OptionalDouble averageSalary = employees.stream()
+                .mapToDouble(Employee::getSalary)
+                .average();
+
+        List<Employee> salaryGreaterThanAverageSalary =employees.stream()
+                .filter(employee -> employee.getSalary() > averageSalary.getAsDouble())
+                .collect(Collectors.toList());
+        //OptionalDouble birbaşa double ilə müqayisə edə bilmərik getAsDouble ilə double gətirdik
 
         Map<Integer, Employee> employeeMap = employees.stream()
                 .collect(Collectors.toMap(Employee::getId, employee -> employee));
@@ -100,8 +109,15 @@ public class Main {
                 .sorted(Comparator.comparing(Employee::getSalary).reversed()).map(Employee::getName).toList();
         System.out.println("get salary decrease order " + decreaseSalary);
 //24
+//Map<Department,Employee> oldEmployee =employees.stream()
+//        .collect(Collectors.groupingBy(Employee::getDepartment,Collectors.maxBy(Employee::getAge)));
+        Map<Department, Optional<Employee>> oldEmployee =employees.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment,Collectors.maxBy(Comparator.comparingInt(Employee::getAge))));
+        System.out.println("The old age employee "+oldEmployee);
+        List<String> listOFEmployee = employees.stream()
+                .map(employee -> employee.getName() + " , " + employee.getSurname())
+                .collect(Collectors.toList());
 
-//25
         //26
 
         int totalYearsOfExperience = employees.stream()
